@@ -8,27 +8,28 @@ import axios from "axios";
 import { Paper } from "@mui/material";
 import { animeSearch } from "../apis/animeListApi";
 
-export default function GenreDropdown({ setAnimeData,setTotalAnimes,page, rowsPerPage, searchCriteria }) {
-  const [categories, setCategories] = React.useState([]);
+export default function DubbedDropdown({ setAnimeData,setTotalAnimes,page, rowsPerPage, searchCriteria }) {
+  const categories = ['Dubbed','Subbed'];
   const [category, setCategory] = React.useState("");
 
   const handleChange = (event) => {
     setCategory(event.target.value);
-    searchCriteria.current = {
-      ...searchCriteria.current,
-      genre: event.target.value,
-    };
-    animeSearch(page, rowsPerPage, searchCriteria.current).then(({ data }) => {
+    switch (event.target.value) {
+      case "Dubbed":
+        delete searchCriteria.current.subbed
+        searchCriteria.current = {...searchCriteria.current,dubbed:true};
+        break;
+      case "Subbed":
+        delete searchCriteria.current.dubbed
+        searchCriteria.current = {...searchCriteria.current,subbed:true};
+        break;
+    } 
+    animeSearch(page,rowsPerPage,searchCriteria.current)
+      .then(({ data }) => {
         setAnimeData(data.content);
         setTotalAnimes(data.page.totalElements);
       });
   };
-
-  React.useEffect(() => {
-    axios
-      .get("http://localhost:8080/anime_info/v1/categories")
-      .then(({ data }) => setCategories(data));
-  }, []);
 
   return (
     <Box
@@ -43,7 +44,7 @@ export default function GenreDropdown({ setAnimeData,setTotalAnimes,page, rowsPe
       }}
     >
       <FormControl fullWidth>
-        <InputLabel id="demo-simple-select-label">Genre</InputLabel>
+        <InputLabel id="demo-simple-select-label">Dubbed</InputLabel>
         <Select
           labelId="demo-simple-select-label"
           id="demo-simple-select"

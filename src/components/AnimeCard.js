@@ -1,4 +1,4 @@
-import * as React from "react";
+import  React, {useState,useCallback, useEffect} from "react";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
@@ -28,6 +28,8 @@ import Favorite from "@mui/icons-material/Favorite";
 import CloseIcon from '@mui/icons-material/Close';
 import WatchIcon from '@mui/icons-material/Watch';
 import WatchOutlinedIcon from '@mui/icons-material/WatchOutlined';
+import { updateAnime } from "../apis/animeListApi";
+import { Star } from "@mui/icons-material";
 
 export default function AnimeCard({ animeData }) {
   const {
@@ -44,22 +46,22 @@ export default function AnimeCard({ animeData }) {
   } = animeData;
   const isNew = isToday(parse(createdDate, "yyyy-MM-dd", new Date()));
   const BASE_URL = "https://www10.gogoanimes.fi";
-  const [disabled, setDisabled] = React.useState(true);
-  const [watched, setWatched] = React.useState(isWatched);
-  const [rating, setRating] = React.useState(star);
-  const saveAnimeDetails = React.useCallback(() => {
+  const [disabled, setDisabled] = useState(true);
+  const [watched, setWatched] = useState(isWatched);
+  const [rating, setRating] = useState(star);
+  const saveAnimeDetails = useCallback(() => {
     const animeUpdateRequest = {
       id,
       is_watched: watched,
       star: rating,
     };
-    const headers = {
-      "Content-Type": "application/json",
-    };
-    axios.put("http://localhost:8080/anime_info/v1", animeUpdateRequest, {
-      headers,
-    });
+    updateAnime(animeUpdateRequest)
   }, [id, watched, rating]);
+  useEffect(()=>{
+    setWatched(isWatched)
+    setRating(star)
+  },[isWatched,star])
+  console.log({watched},{rating})
   return (
     <Card raised sx={{ maxWidth: 345 }}>
       <CardHeader
@@ -155,14 +157,13 @@ export default function AnimeCard({ animeData }) {
                   checked={watched}
                   onChange={(e) => {
                     console.log(e.target)
-                    setWatched(!watched)}}
-                  value={watched}
+                    setWatched(!watched)
+                  }}
                   icon={<WatchOutlinedIcon />}
                   checkedIcon={<WatchIcon />}
                 />
               }
               label={watched ? "Watched" : "Not Watched"}
-              //sx={{ pl: "0.5em" }}
             />
           </Grid>
           {isNew && (

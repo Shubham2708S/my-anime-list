@@ -6,28 +6,27 @@ import FormControl from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
 import axios from "axios";
 import { Box, Paper } from "@mui/material";
+import { animeSearch } from "../apis/animeListApi";
 
-export default function FilterRadioButton({
+export default function WatchedFilterRadioButton({
   setAnimeData,
   setTotalAnimes,
   page,
   rowsPerPage,
+  searchCriteria,
 }) {
   const handleRadio = (e) => {
-    let searchCriteria = "";
     switch (e.target.defaultValue) {
-      case "dubbed":
-        searchCriteria = "&dubbed=true";
+      case "watched":
+        delete searchCriteria.current.notwatched
+        searchCriteria.current = {...searchCriteria.current,watched:true};
         break;
-      case "subbed":
-        searchCriteria = "&subbed=true";
+      case "notWatched":
+        delete searchCriteria.current.watched
+        searchCriteria.current = {...searchCriteria.current,notwatched:true};
         break;
-      
     } 
-    axios
-      .get(
-        `http://localhost:8080/anime_info/v1/search?page_no=${page}&page_size=${rowsPerPage}${searchCriteria}`
-      )
+    animeSearch(page,rowsPerPage,searchCriteria.current)
       .then(({ data }) => {
         setAnimeData(data.content);
         setTotalAnimes(data.page.totalElements);
@@ -49,11 +48,11 @@ export default function FilterRadioButton({
         name="row-radio-buttons-group"
       >
         <FormControlLabel
-          value="dubbed"
+          value="watched"
           control={<Radio onChange={handleRadio} />}
-          label="Dubbed"
+          label="Watched"
         />
-        <FormControlLabel value="subbed" control={<Radio onChange={handleRadio} />} label="Subbed" />
+        <FormControlLabel value="notWatched" control={<Radio onChange={handleRadio} />} label="Not Watched" />
       </RadioGroup>
     </FormControl>
     </Paper>

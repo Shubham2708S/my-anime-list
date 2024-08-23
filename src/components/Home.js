@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import AnimeCard from "./AnimeCard";
@@ -8,7 +8,6 @@ import Pagination from "./Pagination";
 import TextField from "@mui/material/TextField";
 import Toggle from "./Toggle";
 import { FormControlLabel } from "@mui/material";
-import FilterRadioButton from "./FilterRadioButton";
 import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
 import SearchIcon from "@mui/icons-material/Search";
@@ -17,10 +16,15 @@ import AutorenewIcon from "@mui/icons-material/Autorenew";
 import FilterCheckBoxes from "./FilterCheckBoxes";
 import GenreDropdown from "./GenreDropdown";
 import ShuffleOnOutlinedIcon from '@mui/icons-material/ShuffleOnOutlined';
-import { animeSearch } from "../apis/animeListApi";
+import { animeSearch, refreshAnime, shuffleAnime } from "../apis/animeListApi";
+import WatchedFilterRadioButton from "./WatchedFilterRadioButton";
+import DubbedDropdown from "./DubbedDropdown";
+import WatchedDropdown from "./WatchedDropdown";
+import YearsDropdown from "./YearsDropdown";
+import RatingsDropdown from "./RatingsDropdown";
 
 const Home = () => {
-
+  const searchCriteria = useRef({})
   const [animeData, setAnimeData] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(20);
@@ -37,21 +41,19 @@ const Home = () => {
     getAnimeList();
   }, [getAnimeList]);
   const searchAnime = useCallback(() => {
-    axios
-      .get(
-        `http://localhost:8080/anime_info/v1/search?page_no=${page}&page_size=${rowsPerPage}&name=${searchValue}`
-      )
+    searchCriteria.current = {...searchCriteria.current, name:searchValue}
+    animeSearch(page,rowsPerPage,searchCriteria.current)
       .then(({ data }) => {
         setAnimeData(data.content);
         setTotalAnimes(data.page.totalElements);
       });
   }, [page, rowsPerPage, searchValue]);
-  const handleRefreshButton = async () => {
-    await axios.get("http://localhost:8080/anime_info/v1/refresh");
+  const handleRefreshButton =  () => {
+     refreshAnime();
     getAnimeList();
   };
-  const handleShuffleButton = async () => {
-    await axios.get("http://localhost:8080/anime_info/v1/random")
+  const handleShuffleButton =  () => {
+     shuffleAnime(rowsPerPage)
     .then(({ data }) => {
         setAnimeData(data.content);
         setTotalAnimes(data.page.totalElements);
@@ -81,14 +83,48 @@ const Home = () => {
             setSearchValue(event.target.value);
           }}
         />
-        <FilterRadioButton
-          setAnimeData={setAnimeData}
-          setTotalAnimes={setTotalAnimes}
-          page={page}
-          rowsPerPage={rowsPerPage}
+        <DubbedDropdown 
+        page={page}
+        rowsPerPage={rowsPerPage}
+        searchCriteria={searchCriteria}
+        setAnimeData={setAnimeData}
+        setTotalAnimes={setTotalAnimes}
         />
-        <FilterCheckBoxes />
-        <GenreDropdown/>
+        <WatchedDropdown 
+        page={page}
+        rowsPerPage={rowsPerPage}
+        searchCriteria={searchCriteria}
+        setAnimeData={setAnimeData}
+        setTotalAnimes={setTotalAnimes}
+        />
+        <FilterCheckBoxes 
+        page={page}
+        rowsPerPage={rowsPerPage}
+        searchCriteria={searchCriteria}
+        setAnimeData={setAnimeData}
+        setTotalAnimes={setTotalAnimes}
+        />
+        <GenreDropdown 
+        page={page}
+        rowsPerPage={rowsPerPage}
+        searchCriteria={searchCriteria}
+        setAnimeData={setAnimeData}
+        setTotalAnimes={setTotalAnimes}
+        />
+        <YearsDropdown 
+        page={page}
+        rowsPerPage={rowsPerPage}
+        searchCriteria={searchCriteria}
+        setAnimeData={setAnimeData}
+        setTotalAnimes={setTotalAnimes}
+        />
+        <RatingsDropdown 
+        page={page}
+        rowsPerPage={rowsPerPage}
+        searchCriteria={searchCriteria}
+        setAnimeData={setAnimeData}
+        setTotalAnimes={setTotalAnimes}
+        />
         <Button
           variant="outlined"
           startIcon={<AutorenewIcon />}
@@ -123,7 +159,7 @@ const Home = () => {
       <Grid xs={12}>
         <Box sx={{ flexGrow: 1, mx: "5vw" }}>
           <Grid container spacing={2}>
-            {animeData.map((anime, index) => (
+            {animeData.length && animeData.map((anime, index) => (
               <Grid item xs={3} key={index}>
                 <AnimeCard animeData={anime} />
               </Grid>
