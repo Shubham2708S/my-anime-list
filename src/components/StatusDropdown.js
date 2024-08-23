@@ -7,31 +7,22 @@ import Select from "@mui/material/Select";
 import axios from "axios";
 import { Paper } from "@mui/material";
 import { animeSearch } from "../apis/animeListApi";
-import startCase from 'lodash/startCase'
 
-export default function GenreDropdown({ setAnimeData,setTotalAnimes,page, rowsPerPage, searchCriteria }) {
-  const [categories, setCategories] = React.useState([]);
+export default function StatusDropdown({ setAnimeData,setTotalAnimes,page, rowsPerPage, searchCriteria }) {
+  const categories = ['Ongoing','Completed'];
   const [category, setCategory] = React.useState("");
 
   const handleChange = (event) => {
     setCategory(event.target.value);
-    searchCriteria.current = {
-      ...searchCriteria.current,
-      genre: event.target.value,
-    };
-    animeSearch(page, rowsPerPage, searchCriteria.current).then(({ data }) => {
+  
+    searchCriteria.current = {...searchCriteria.current,status:event.target.value};
+        
+    animeSearch(page,rowsPerPage,searchCriteria.current)
+      .then(({ data }) => {
         setAnimeData(data.content);
         setTotalAnimes(data.page.totalElements);
       });
   };
-
-  React.useEffect(() => {
-    axios
-      .get("http://localhost:8080/anime_info/v1/categories")
-      .then(({ data }) => {
-        setCategories(data.sort().map(d => startCase(d)))
-      });
-  }, []);
 
   return (
     <Box
@@ -46,7 +37,7 @@ export default function GenreDropdown({ setAnimeData,setTotalAnimes,page, rowsPe
       }}
     >
       <FormControl fullWidth>
-        <InputLabel id="demo-simple-select-label">Genre</InputLabel>
+        <InputLabel id="demo-simple-select-label">Status</InputLabel>
         <Select
           labelId="demo-simple-select-label"
           id="demo-simple-select"

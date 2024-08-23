@@ -15,49 +15,47 @@ import Button from "@mui/material/Button";
 import AutorenewIcon from "@mui/icons-material/Autorenew";
 import FilterCheckBoxes from "./FilterCheckBoxes";
 import GenreDropdown from "./GenreDropdown";
-import ShuffleOnOutlinedIcon from '@mui/icons-material/ShuffleOnOutlined';
+import ShuffleOnOutlinedIcon from "@mui/icons-material/ShuffleOnOutlined";
 import { animeSearch, refreshAnime, shuffleAnime } from "../apis/animeListApi";
 import WatchedFilterRadioButton from "./WatchedFilterRadioButton";
 import DubbedDropdown from "./DubbedDropdown";
 import WatchedDropdown from "./WatchedDropdown";
 import YearsDropdown from "./YearsDropdown";
 import RatingsDropdown from "./RatingsDropdown";
+import StatusDropdown from "./StatusDropdown";
 
 const Home = () => {
-  const searchCriteria = useRef({})
+  const searchCriteria = useRef({});
   const [animeData, setAnimeData] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(20);
   const [totalAnimes, setTotalAnimes] = useState(20);
   const [searchValue, setSearchValue] = useState("");
   const getAnimeList = useCallback(() => {
-    animeSearch(page,rowsPerPage)
-      .then(({ data }) => {
-        setAnimeData(data.content);
-        setTotalAnimes(data.page.totalElements);
-      });
+    animeSearch(page, rowsPerPage).then(({ data }) => {
+      setAnimeData(data.content);
+      setTotalAnimes(data.page.totalElements);
+    });
   }, [page, rowsPerPage]);
   useEffect(() => {
     getAnimeList();
   }, [getAnimeList]);
   const searchAnime = useCallback(() => {
-    searchCriteria.current = {...searchCriteria.current, name:searchValue}
-    animeSearch(page,rowsPerPage,searchCriteria.current)
-      .then(({ data }) => {
-        setAnimeData(data.content);
-        setTotalAnimes(data.page.totalElements);
-      });
+    searchCriteria.current = { ...searchCriteria.current, name: searchValue };
+    animeSearch(page, rowsPerPage, searchCriteria.current).then(({ data }) => {
+      setAnimeData(data.content);
+      setTotalAnimes(data.page.totalElements);
+    });
   }, [page, rowsPerPage, searchValue]);
-  const handleRefreshButton =  () => {
-     refreshAnime();
+  const handleRefreshButton = () => {
+    refreshAnime();
     getAnimeList();
   };
-  const handleShuffleButton =  () => {
-     shuffleAnime(rowsPerPage)
-    .then(({ data }) => {
-        setAnimeData(data.content);
-        setTotalAnimes(data.page.totalElements);
-      });
+  const handleShuffleButton = () => {
+    shuffleAnime(rowsPerPage).then(({ data }) => {
+      setAnimeData(data.content);
+      setTotalAnimes(data.page.totalElements);
+    });
   };
   return (
     <Grid container>
@@ -68,7 +66,7 @@ const Home = () => {
         sx={{ mx: "5vw", mb: "2vh", mt: "4vh" }}
       >
         <TextField
-          label="With normal TextField"
+          label="Search"
           InputProps={{
             endAdornment: (
               <InputAdornment>
@@ -82,48 +80,64 @@ const Home = () => {
           onChange={(event) => {
             setSearchValue(event.target.value);
           }}
+          sx={{
+            minWidth: 120,
+            display: "flex",
+            justifyContent: "center",
+            flexWrap: "wrap",
+            listStyle: "none",
+            p: 0.5,
+            m: 1,
+          }}
         />
-        <DubbedDropdown 
-        page={page}
-        rowsPerPage={rowsPerPage}
-        searchCriteria={searchCriteria}
-        setAnimeData={setAnimeData}
-        setTotalAnimes={setTotalAnimes}
+        <DubbedDropdown
+          page={page}
+          rowsPerPage={rowsPerPage}
+          searchCriteria={searchCriteria}
+          setAnimeData={setAnimeData}
+          setTotalAnimes={setTotalAnimes}
         />
-        <WatchedDropdown 
-        page={page}
-        rowsPerPage={rowsPerPage}
-        searchCriteria={searchCriteria}
-        setAnimeData={setAnimeData}
-        setTotalAnimes={setTotalAnimes}
+        <WatchedDropdown
+          page={page}
+          rowsPerPage={rowsPerPage}
+          searchCriteria={searchCriteria}
+          setAnimeData={setAnimeData}
+          setTotalAnimes={setTotalAnimes}
         />
-        <FilterCheckBoxes 
-        page={page}
-        rowsPerPage={rowsPerPage}
-        searchCriteria={searchCriteria}
-        setAnimeData={setAnimeData}
-        setTotalAnimes={setTotalAnimes}
+        <FilterCheckBoxes
+          page={page}
+          rowsPerPage={rowsPerPage}
+          searchCriteria={searchCriteria}
+          setAnimeData={setAnimeData}
+          setTotalAnimes={setTotalAnimes}
         />
-        <GenreDropdown 
-        page={page}
-        rowsPerPage={rowsPerPage}
-        searchCriteria={searchCriteria}
-        setAnimeData={setAnimeData}
-        setTotalAnimes={setTotalAnimes}
+        <GenreDropdown
+          page={page}
+          rowsPerPage={rowsPerPage}
+          searchCriteria={searchCriteria}
+          setAnimeData={setAnimeData}
+          setTotalAnimes={setTotalAnimes}
         />
-        <YearsDropdown 
-        page={page}
-        rowsPerPage={rowsPerPage}
-        searchCriteria={searchCriteria}
-        setAnimeData={setAnimeData}
-        setTotalAnimes={setTotalAnimes}
+        <YearsDropdown
+          page={page}
+          rowsPerPage={rowsPerPage}
+          searchCriteria={searchCriteria}
+          setAnimeData={setAnimeData}
+          setTotalAnimes={setTotalAnimes}
         />
-        <RatingsDropdown 
-        page={page}
-        rowsPerPage={rowsPerPage}
-        searchCriteria={searchCriteria}
-        setAnimeData={setAnimeData}
-        setTotalAnimes={setTotalAnimes}
+        <RatingsDropdown
+          page={page}
+          rowsPerPage={rowsPerPage}
+          searchCriteria={searchCriteria}
+          setAnimeData={setAnimeData}
+          setTotalAnimes={setTotalAnimes}
+        />
+        <StatusDropdown
+          page={page}
+          rowsPerPage={rowsPerPage}
+          searchCriteria={searchCriteria}
+          setAnimeData={setAnimeData}
+          setTotalAnimes={setTotalAnimes}
         />
         <Button
           variant="outlined"
@@ -159,11 +173,12 @@ const Home = () => {
       <Grid xs={12}>
         <Box sx={{ flexGrow: 1, mx: "5vw" }}>
           <Grid container spacing={2}>
-            {animeData.length && animeData.map((anime, index) => (
-              <Grid item xs={3} key={index}>
-                <AnimeCard animeData={anime} />
-              </Grid>
-            ))}
+            {animeData.length &&
+              animeData.map((anime, index) => (
+                <Grid item xs={3} key={index}>
+                  <AnimeCard animeData={anime} />
+                </Grid>
+              ))}
           </Grid>
         </Box>
       </Grid>
