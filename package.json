@@ -1,7 +1,7 @@
 {
   "name": "my-anime-list",
   "version": "0.1.0",
-  "homepage": "https://Shubham2708S.github.io/react-gh-pages",
+  "homepage": "https://shubham2708s.github.io/my-anime-list",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.13.0",
