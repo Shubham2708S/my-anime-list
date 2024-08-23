@@ -1,10 +1,10 @@
 {
   "files": {
-    "main.css": "/react-gh-pages/static/css/main.e6c13ad2.css",
-    "main.js": "/react-gh-pages/static/js/main.ac15f547.js",
-    "index.html": "/react-gh-pages/index.html",
-    "main.e6c13ad2.css.map": "/react-gh-pages/static/css/main.e6c13ad2.css.map",
-    "main.ac15f547.js.map": "/react-gh-pages/static/js/main.ac15f547.js.map"
+    "main.css": "/my-anime-list/static/css/main.e6c13ad2.css",
+    "main.js": "/my-anime-list/static/js/main.ac15f547.js",
+    "index.html": "/my-anime-list/index.html",
+    "main.e6c13ad2.css.map": "/my-anime-list/static/css/main.e6c13ad2.css.map",
+    "main.ac15f547.js.map": "/my-anime-list/static/js/main.ac15f547.js.map"
   },
   "entrypoints": [
     "static/css/main.e6c13ad2.css",
