@@ -98,7 +98,7 @@ const Home = () => {
     }
     return (isLoading ? Array.from(new Array(rowsPerPage)) : animeData).map(
       (anime, index) => (
-        <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
+        <Grid item xs={12} sm={6} md={6} lg={3} key={index}>
           {anime ? (
             <AnimeCard animeData={anime} />
           ) : (
@@ -107,7 +107,7 @@ const Home = () => {
               variant="rectangular"
               xs={12}
               sm={6}
-              md={4}
+              md={6}
               lg={3}
               height={600}
             />
