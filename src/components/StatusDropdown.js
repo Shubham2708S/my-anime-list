@@ -1,11 +1,10 @@
+/* eslint-disable react/prop-types */
 import * as React from "react";
 import Box from "@mui/material/Box";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import axios from "axios";
-import { Paper } from "@mui/material";
 import { animeSearch } from "../apis/animeListApi";
 
 export default function StatusDropdown({ setAnimeData,setTotalAnimes,page, rowsPerPage, searchCriteria }) {
@@ -33,10 +32,10 @@ export default function StatusDropdown({ setAnimeData,setTotalAnimes,page, rowsP
         flexWrap: "wrap",
         listStyle: "none",
         p: 0.5,
-        m: 1,
+        my: 1,
       }}
     >
-      <FormControl fullWidth>
+      <FormControl fullWidth variant="standard" >
         <InputLabel id="demo-simple-select-label">Status</InputLabel>
         <Select
           labelId="demo-simple-select-label"

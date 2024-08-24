@@ -1,11 +1,10 @@
+/* eslint-disable react/prop-types */
 import * as React from "react";
 import Box from "@mui/material/Box";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import axios from "axios";
-import { Paper } from "@mui/material";
 import { animeSearch } from "../apis/animeListApi";
 
 export default function DubbedDropdown({ setAnimeData,setTotalAnimes,page, rowsPerPage, searchCriteria }) {
@@ -23,6 +22,9 @@ export default function DubbedDropdown({ setAnimeData,setTotalAnimes,page, rowsP
         delete searchCriteria.current.dubbed
         searchCriteria.current = {...searchCriteria.current,subbed:true};
         break;
+      default:
+        delete searchCriteria.current.subbed
+        delete searchCriteria.current.dubbed
     } 
     animeSearch(page,rowsPerPage,searchCriteria.current)
       .then(({ data }) => {
@@ -40,10 +42,10 @@ export default function DubbedDropdown({ setAnimeData,setTotalAnimes,page, rowsP
         flexWrap: "wrap",
         listStyle: "none",
         p: 0.5,
-        m: 1,
+        my: 1,
       }}
     >
-      <FormControl fullWidth>
+      <FormControl fullWidth variant="standard" >
         <InputLabel id="demo-simple-select-label">Dubbed</InputLabel>
         <Select
           labelId="demo-simple-select-label"

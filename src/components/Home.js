@@ -1,13 +1,10 @@
 import React, { useRef } from "react";
 import { useCallback, useEffect, useState } from "react";
-import axios from "axios";
 import AnimeCard from "./AnimeCard";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Pagination from "./Pagination";
 import TextField from "@mui/material/TextField";
-import Toggle from "./Toggle";
-import { FormControlLabel } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
 import SearchIcon from "@mui/icons-material/Search";
@@ -17,7 +14,6 @@ import FilterCheckBoxes from "./FilterCheckBoxes";
 import GenreDropdown from "./GenreDropdown";
 import ShuffleOnOutlinedIcon from "@mui/icons-material/ShuffleOnOutlined";
 import { animeSearch, refreshAnime, shuffleAnime } from "../apis/animeListApi";
-import WatchedFilterRadioButton from "./WatchedFilterRadioButton";
 import DubbedDropdown from "./DubbedDropdown";
 import WatchedDropdown from "./WatchedDropdown";
 import YearsDropdown from "./YearsDropdown";
@@ -52,7 +48,7 @@ const Home = () => {
     getAnimeList();
   };
   const handleShuffleButton = () => {
-    shuffleAnime(rowsPerPage).then(({ data }) => {
+    shuffleAnime(rowsPerPage,searchCriteria.current).then(({ data }) => {
       setAnimeData(data.content);
       setTotalAnimes(data.page.totalElements);
     });
@@ -62,16 +58,15 @@ const Home = () => {
       <Grid
         container
         direction="row-reverse"
-        xs={12}
-        sx={{ mx: "5vw", mb: "2vh", mt: "4vh" }}
+        sx={{ mx: "5vw", mt: "4vh" }}
       >
         <TextField
           label="Search"
           InputProps={{
             endAdornment: (
-              <InputAdornment>
-                <IconButton>
-                  <SearchIcon onClick={searchAnime} />
+              <InputAdornment position="end">
+                <IconButton onClick={searchAnime}>
+                  <SearchIcon/>
                 </IconButton>
               </InputAdornment>
             ),
@@ -83,12 +78,9 @@ const Home = () => {
           sx={{
             minWidth: 120,
             display: "flex",
-            justifyContent: "center",
-            flexWrap: "wrap",
-            listStyle: "none",
-            p: 0.5,
-            m: 1,
+            my: 1.5,
           }}
+          variant="standard" 
         />
         <DubbedDropdown
           page={page}
@@ -98,13 +90,6 @@ const Home = () => {
           setTotalAnimes={setTotalAnimes}
         />
         <WatchedDropdown
-          page={page}
-          rowsPerPage={rowsPerPage}
-          searchCriteria={searchCriteria}
-          setAnimeData={setAnimeData}
-          setTotalAnimes={setTotalAnimes}
-        />
-        <FilterCheckBoxes
           page={page}
           rowsPerPage={rowsPerPage}
           searchCriteria={searchCriteria}
@@ -139,6 +124,17 @@ const Home = () => {
           setAnimeData={setAnimeData}
           setTotalAnimes={setTotalAnimes}
         />
+        <FilterCheckBoxes
+          page={page}
+          rowsPerPage={rowsPerPage}
+          searchCriteria={searchCriteria}
+          setAnimeData={setAnimeData}
+          setTotalAnimes={setTotalAnimes}
+        />
+      </Grid>
+      <Grid container direction="row-reverse" 
+      sx={{ mx: "5vw", mb: "2vh" }}
+      >
         <Button
           variant="outlined"
           startIcon={<AutorenewIcon />}
@@ -149,7 +145,7 @@ const Home = () => {
             flexWrap: "wrap",
             listStyle: "none",
             p: 0.5,
-            m: 1,
+            my: 1,
           }}
         >
           Refresh
@@ -170,10 +166,12 @@ const Home = () => {
           Shuffle
         </Button>
       </Grid>
-      <Grid xs={12}>
-        <Box sx={{ flexGrow: 1, mx: "5vw" }}>
+      <Grid item xs={12}>
+        <Box sx={{ flexGrow: 1,
+           mx: "5vw"
+            }}>
           <Grid container spacing={2}>
-            {animeData.length &&
+            {animeData.length > 1 &&
               animeData.map((anime, index) => (
                 <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
                   <AnimeCard animeData={anime} />

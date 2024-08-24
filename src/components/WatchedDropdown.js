@@ -1,33 +1,37 @@
+/* eslint-disable react/prop-types */
 import * as React from "react";
 import Box from "@mui/material/Box";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import axios from "axios";
-import { Paper } from "@mui/material";
 import { animeSearch } from "../apis/animeListApi";
 
-export default function WatchedDropdown({ setAnimeData,setTotalAnimes,page, rowsPerPage, searchCriteria }) {
-  const categories = ['Watched','Not Watched'];
+export default function WatchedDropdown({
+  setAnimeData,
+  setTotalAnimes,
+  page,
+  rowsPerPage,
+  searchCriteria,
+}) {
+  const categories = [
+    { label: "Watched", value: "WATCHED" },
+    { label: "Not Watched", value: "NOT_WATCHED" },
+    { label: "Watchingd", value: "WATCHING" },
+    { label: "Won't Watch", value: "WONT_WATCH" }
+  ];
   const [category, setCategory] = React.useState("");
 
   const handleChange = (event) => {
     setCategory(event.target.value);
-    switch (event.target.value) {
-      case "Watched":
-        delete searchCriteria.current.notwatched
-        searchCriteria.current = {...searchCriteria.current,watched:true};
-        break;
-      case "Not Watched":
-        delete searchCriteria.current.watched
-        searchCriteria.current = {...searchCriteria.current,notwatched:true};
-    }
-    animeSearch(page,rowsPerPage,searchCriteria.current)
-      .then(({ data }) => {
-        setAnimeData(data.content);
-        setTotalAnimes(data.page.totalElements);
-      });
+  
+        searchCriteria.current = { ...searchCriteria.current, watchStatus: event.target.value };
+        
+    
+    animeSearch(page, rowsPerPage, searchCriteria.current).then(({ data }) => {
+      setAnimeData(data.content);
+      setTotalAnimes(data.page.totalElements);
+    });
   };
 
   return (
@@ -39,10 +43,10 @@ export default function WatchedDropdown({ setAnimeData,setTotalAnimes,page, rows
         flexWrap: "wrap",
         listStyle: "none",
         p: 0.5,
-        m: 1,
+        my: 1,
       }}
     >
-      <FormControl fullWidth>
+      <FormControl fullWidth variant="standard">
         <InputLabel id="demo-simple-select-label">Watched</InputLabel>
         <Select
           labelId="demo-simple-select-label"
@@ -52,8 +56,8 @@ export default function WatchedDropdown({ setAnimeData,setTotalAnimes,page, rows
           onChange={handleChange}
         >
           {categories.map((category, index) => (
-            <MenuItem key={index} value={category}>
-              {category}
+            <MenuItem key={index} value={category.value}>
+              {category.label}
             </MenuItem>
           ))}
         </Select>

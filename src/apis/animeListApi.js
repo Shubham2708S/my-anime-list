@@ -18,11 +18,12 @@ export const refreshAnime = () => {
   return axios.get(url);
 };
 
-export const shuffleAnime = (rowsPerPage) => {
+export const shuffleAnime = (rowsPerPage,searchCriteria) => {
   const url = `${apiConfig.ANIME_URL}/random`;
   const query = {
     params: {
       page_size: rowsPerPage,
+      ...searchCriteria
     },
   };
   return axios.get(url, query);
@@ -31,4 +32,9 @@ export const shuffleAnime = (rowsPerPage) => {
 export const updateAnime = (animeUpdateRequest) => {
   const url = apiConfig.ANIME_URL;
   return axios.put(url, animeUpdateRequest, {});
+};
+
+export const getCategories = () => {
+  const url = `${apiConfig.ANIME_URL}/categories`;
+  return axios.get(url);
 };

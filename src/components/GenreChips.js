@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import * as React from 'react';
 import { styled } from '@mui/material/styles';
 import Chip from '@mui/material/Chip';
@@ -13,11 +14,16 @@ export default function GenreChips({genres}) {
     <Paper
       sx={{
         display: 'flex',
-        justifyContent: 'center',
-        flexWrap: 'wrap',
+        alignItems: 'center',
         listStyle: 'none',
-        p: 0.5,
+        px: 0.5,
         m: 0,
+        height: '40px',
+        overflowX: 'scroll',
+        scrollbarWidth: "none", // Hide the scrollbar for firefox
+    '&::-webkit-scrollbar': {
+        display: 'none', // Hide the scrollbar for WebKit browsers (Chrome, Safari, Edge, etc.)
+    },
       }}
       component="ul"
     >
@@ -26,7 +32,7 @@ export default function GenreChips({genres}) {
           <ListItem key={index}>
             <Chip
               label={data}
-              clickable
+              size="small"
             />
           </ListItem>
         );
