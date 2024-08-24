@@ -1,24 +1,23 @@
 /* eslint-disable react/prop-types */
-import * as React from 'react';
+import React,{useState} from 'react';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import { Box } from '@mui/material';
-import { animeSearch } from '../apis/animeListApi';
 
-export default function FilterCheckBoxes({ setAnimeData,setTotalAnimes,page, rowsPerPage, searchCriteria }) {
-    const [newFilter,setNewFilter] = React.useState(false)
-    const handleCheckBox = () => {
-        searchCriteria.current = {...searchCriteria.current,newly:!newFilter}
+const FilterCheckBoxes= ({ searchCriteria,searchAnime }) => {
+    const [newFilter,setNewFilter] = useState(false)
+
+    const handleCheckBox = (e) => {
+       if(e.target.checked){
+        searchCriteria.current = {...searchCriteria.current,newly:true}
+       } else {
+        delete searchCriteria.current.newly
+       }
         setNewFilter(!newFilter)
-        animeSearch(page,rowsPerPage,searchCriteria.current)
-          .then(({ data }) => {
-            setAnimeData(data.content);
-            setTotalAnimes(data.page.totalElements);
-          });
+        searchAnime(searchCriteria.current)
       };
 
-    
   return (
     <Box
     sx={{
@@ -32,8 +31,10 @@ export default function FilterCheckBoxes({ setAnimeData,setTotalAnimes,page, row
       mx: 0,
     }}>
     <FormGroup row>
-      <FormControlLabel value="new" control={<Checkbox onChange={handleCheckBox} checked={newFilter}/>} label="New" />
+      <FormControlLabel value={newFilter} control={<Checkbox onChange={handleCheckBox} checked={newFilter}/>} label="New" />
     </FormGroup>
     </Box>
   );
 }
+
+export default FilterCheckBoxes

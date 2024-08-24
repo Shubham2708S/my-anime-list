@@ -1,72 +1,132 @@
-import React, { useRef } from "react";
-import { useCallback, useEffect, useState } from "react";
-import AnimeCard from "./AnimeCard";
-import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
-import Pagination from "./Pagination";
-import TextField from "@mui/material/TextField";
-import IconButton from "@mui/material/IconButton";
-import InputAdornment from "@mui/material/InputAdornment";
+import React, { useRef, useCallback, useEffect, useState } from "react";
+
+import {
+  Paper,
+  Skeleton,
+  Grid,
+  TextField,
+  IconButton,
+  InputAdornment,
+  Button,
+} from "@mui/material";
+
 import SearchIcon from "@mui/icons-material/Search";
-import Button from "@mui/material/Button";
 import AutorenewIcon from "@mui/icons-material/Autorenew";
+import ShuffleOnOutlinedIcon from "@mui/icons-material/ShuffleOnOutlined";
+
+import AnimeCard from "./AnimeCard";
+import Pagination from "./Pagination";
 import FilterCheckBoxes from "./FilterCheckBoxes";
 import GenreDropdown from "./GenreDropdown";
-import ShuffleOnOutlinedIcon from "@mui/icons-material/ShuffleOnOutlined";
 import { animeSearch, refreshAnime, shuffleAnime } from "../apis/animeListApi";
 import DubbedDropdown from "./DubbedDropdown";
 import WatchedDropdown from "./WatchedDropdown";
 import YearsDropdown from "./YearsDropdown";
 import RatingsDropdown from "./RatingsDropdown";
 import StatusDropdown from "./StatusDropdown";
+import nothingFound from "../image/nothing_found.png";
 
 const Home = () => {
   const searchCriteria = useRef({});
+
   const [animeData, setAnimeData] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(20);
   const [totalAnimes, setTotalAnimes] = useState(20);
   const [searchValue, setSearchValue] = useState("");
-  const getAnimeList = useCallback(() => {
-    animeSearch(page, rowsPerPage).then(({ data }) => {
-      setAnimeData(data.content);
-      setTotalAnimes(data.page.totalElements);
-    });
-  }, [page, rowsPerPage]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const searchAnime = useCallback(
+    (searchCriteria = {}) => {
+      setIsLoading(true);
+      animeSearch(page, rowsPerPage, searchCriteria)
+        .then(({ data }) => {
+          setAnimeData(data.content);
+          setTotalAnimes(data.page.totalElements);
+        })
+        .finally(() => setIsLoading(false));
+    },
+    [page, rowsPerPage]
+  );
+
   useEffect(() => {
-    getAnimeList();
-  }, [getAnimeList]);
-  const searchAnime = useCallback(() => {
+    searchAnime(searchCriteria);
+  }, [searchAnime]);
+
+  const searchAnimeByName = useCallback(() => {
     searchCriteria.current = { ...searchCriteria.current, name: searchValue };
-    animeSearch(page, rowsPerPage, searchCriteria.current).then(({ data }) => {
-      setAnimeData(data.content);
-      setTotalAnimes(data.page.totalElements);
-    });
-  }, [page, rowsPerPage, searchValue]);
+    searchAnime(searchCriteria.current);
+  }, [searchValue, searchAnime]);
+
   const handleRefreshButton = () => {
     refreshAnime();
-    getAnimeList();
+    searchAnime();
   };
+
   const handleShuffleButton = () => {
-    shuffleAnime(rowsPerPage,searchCriteria.current).then(({ data }) => {
-      setAnimeData(data.content);
-      setTotalAnimes(data.page.totalElements);
-    });
+    setIsLoading(true);
+    shuffleAnime(rowsPerPage, searchCriteria.current)
+      .then(({ data }) => {
+        setAnimeData(data.content);
+        setTotalAnimes(data.page.totalElements);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
+
+  const getAnimeCard = () => {
+    if (!isLoading && !animeData.length) {
+      return (
+        <Grid
+          sx={{
+            height: "500px",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+          item
+          xs={12}
+        >
+          <img
+            src={nothingFound}
+            alt="No result found"
+            style={{ width: "50vw", height: "70vh" }}
+          />
+        </Grid>
+      );
+    }
+    return (isLoading ? Array.from(new Array(rowsPerPage)) : animeData).map(
+      (anime, index) => (
+        <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
+          {anime ? (
+            <AnimeCard animeData={anime} />
+          ) : (
+            <Skeleton
+              animation="wave"
+              variant="rectangular"
+              xs={12}
+              sm={6}
+              md={4}
+              lg={3}
+              height={600}
+            />
+          )}
+        </Grid>
+      )
+    );
+  };
+
   return (
     <Grid container>
-      <Grid
-        container
-        direction="row-reverse"
-        sx={{ mx: "5vw", mt: "4vh" }}
-      >
+      <Grid container direction="row-reverse" sx={{ mx: "5vw", mt: "4vh" }}>
         <TextField
           label="Search"
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
-                <IconButton onClick={searchAnime}>
-                  <SearchIcon/>
+                <IconButton onClick={searchAnimeByName}>
+                  <SearchIcon />
                 </IconButton>
               </InputAdornment>
             ),
@@ -75,66 +135,46 @@ const Home = () => {
           onChange={(event) => {
             setSearchValue(event.target.value);
           }}
+          onKeyDown={(e) =>
+            e.key === "Enter" ? searchAnimeByName(e.target.value) : null
+          }
           sx={{
             minWidth: 120,
             display: "flex",
             my: 1.5,
           }}
-          variant="standard" 
+          variant="standard"
         />
         <DubbedDropdown
-          page={page}
-          rowsPerPage={rowsPerPage}
           searchCriteria={searchCriteria}
-          setAnimeData={setAnimeData}
-          setTotalAnimes={setTotalAnimes}
+          searchAnime={searchAnime}
         />
         <WatchedDropdown
-          page={page}
-          rowsPerPage={rowsPerPage}
           searchCriteria={searchCriteria}
-          setAnimeData={setAnimeData}
-          setTotalAnimes={setTotalAnimes}
+          searchAnime={searchAnime}
         />
         <GenreDropdown
-          page={page}
-          rowsPerPage={rowsPerPage}
           searchCriteria={searchCriteria}
-          setAnimeData={setAnimeData}
-          setTotalAnimes={setTotalAnimes}
+          searchAnime={searchAnime}
         />
         <YearsDropdown
-          page={page}
-          rowsPerPage={rowsPerPage}
           searchCriteria={searchCriteria}
-          setAnimeData={setAnimeData}
-          setTotalAnimes={setTotalAnimes}
+          searchAnime={searchAnime}
         />
         <RatingsDropdown
-          page={page}
-          rowsPerPage={rowsPerPage}
           searchCriteria={searchCriteria}
-          setAnimeData={setAnimeData}
-          setTotalAnimes={setTotalAnimes}
+          searchAnime={searchAnime}
         />
         <StatusDropdown
-          page={page}
-          rowsPerPage={rowsPerPage}
           searchCriteria={searchCriteria}
-          setAnimeData={setAnimeData}
-          setTotalAnimes={setTotalAnimes}
+          searchAnime={searchAnime}
         />
         <FilterCheckBoxes
-          page={page}
-          rowsPerPage={rowsPerPage}
           searchCriteria={searchCriteria}
-          setAnimeData={setAnimeData}
-          setTotalAnimes={setTotalAnimes}
+          searchAnime={searchAnime}
         />
       </Grid>
-      <Grid container direction="row-reverse" 
-      sx={{ mx: "5vw", mb: "2vh" }}
-      >
+      <Grid container direction="row-reverse" sx={{ mx: "5vw", mb: "2vh" }}>
         <Button
           variant="outlined"
           startIcon={<AutorenewIcon />}
@@ -167,18 +207,18 @@ const Home = () => {
         </Button>
       </Grid>
       <Grid item xs={12}>
-        <Box sx={{ flexGrow: 1,
-           mx: "5vw"
-            }}>
-          <Grid container spacing={2}>
-            {animeData.length > 1 &&
-              animeData.map((anime, index) => (
-                <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
-                  <AnimeCard animeData={anime} />
-                </Grid>
-              ))}
-          </Grid>
-        </Box>
+        <Paper
+          sx={{
+            flexGrow: 1,
+            mx: "5vw",
+          }}
+        >
+          {
+            <Grid container spacing={2}>
+              {getAnimeCard(isLoading, rowsPerPage, animeData)}
+            </Grid>
+          }
+        </Paper>
       </Grid>
       <Grid container direction="row-reverse">
         <Pagination

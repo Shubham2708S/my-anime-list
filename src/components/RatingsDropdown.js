@@ -1,25 +1,23 @@
 /* eslint-disable react/prop-types */
-import * as React from "react";
+import React, { useState } from "react";
 import Box from "@mui/material/Box";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import { animeSearch } from "../apis/animeListApi";
 
-export default function RatingsDropdown({ setAnimeData,setTotalAnimes,page, rowsPerPage, searchCriteria }) {
+const RatingsDropdown = ({ searchCriteria, searchAnime }) => {
   const categories = [...Array(10).keys()];
-  const [category, setCategory] = React.useState("");
+
+  const [category, setCategory] = useState("");
 
   const handleChange = (event) => {
     setCategory(event.target.value);
-    searchCriteria.current = {...searchCriteria.current,star:event.target.value};
-  
-    animeSearch(page,rowsPerPage,searchCriteria.current)
-      .then(({ data }) => {
-        setAnimeData(data.content);
-        setTotalAnimes(data.page.totalElements);
-      });
+    searchCriteria.current = {
+      ...searchCriteria.current,
+      star: event.target.value,
+    };
+    searchAnime(searchCriteria.current);
   };
 
   return (
@@ -34,13 +32,13 @@ export default function RatingsDropdown({ setAnimeData,setTotalAnimes,page, rows
         my: 1,
       }}
     >
-      <FormControl fullWidth variant="standard" >
-        <InputLabel id="demo-simple-select-label">Ratings</InputLabel>
+      <FormControl fullWidth variant="standard">
+        <InputLabel id="rating-select-label">Ratings</InputLabel>
         <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
+          labelId="rating-select-label"
+          id="rating-select"
           value={category}
-          label="Age"
+          label="Rating"
           onChange={handleChange}
         >
           {categories.map((category, index) => (
@@ -52,4 +50,6 @@ export default function RatingsDropdown({ setAnimeData,setTotalAnimes,page, rows
       </FormControl>
     </Box>
   );
-}
+};
+
+export default RatingsDropdown;

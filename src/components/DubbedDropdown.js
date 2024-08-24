@@ -1,36 +1,32 @@
 /* eslint-disable react/prop-types */
-import * as React from "react";
+import React, { useState } from "react";
 import Box from "@mui/material/Box";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import { animeSearch } from "../apis/animeListApi";
 
-export default function DubbedDropdown({ setAnimeData,setTotalAnimes,page, rowsPerPage, searchCriteria }) {
-  const categories = ['Dubbed','Subbed'];
-  const [category, setCategory] = React.useState("");
+const DubbedDropdown = ({ searchCriteria, searchAnime }) => {
+  const categories = ["Dubbed", "Subbed"];
+
+  const [category, setCategory] = useState("");
 
   const handleChange = (event) => {
     setCategory(event.target.value);
     switch (event.target.value) {
       case "Dubbed":
-        delete searchCriteria.current.subbed
-        searchCriteria.current = {...searchCriteria.current,dubbed:true};
+        delete searchCriteria.current.subbed;
+        searchCriteria.current = { ...searchCriteria.current, dubbed: true };
         break;
       case "Subbed":
-        delete searchCriteria.current.dubbed
-        searchCriteria.current = {...searchCriteria.current,subbed:true};
+        delete searchCriteria.current.dubbed;
+        searchCriteria.current = { ...searchCriteria.current, subbed: true };
         break;
       default:
-        delete searchCriteria.current.subbed
-        delete searchCriteria.current.dubbed
-    } 
-    animeSearch(page,rowsPerPage,searchCriteria.current)
-      .then(({ data }) => {
-        setAnimeData(data.content);
-        setTotalAnimes(data.page.totalElements);
-      });
+        delete searchCriteria.current.subbed;
+        delete searchCriteria.current.dubbed;
+    }
+    searchAnime(searchCriteria.current);
   };
 
   return (
@@ -45,13 +41,13 @@ export default function DubbedDropdown({ setAnimeData,setTotalAnimes,page, rowsP
         my: 1,
       }}
     >
-      <FormControl fullWidth variant="standard" >
-        <InputLabel id="demo-simple-select-label">Dubbed</InputLabel>
+      <FormControl fullWidth variant="standard">
+        <InputLabel id="dubbed-select-label">Dubbed</InputLabel>
         <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
+          labelId="dubbed-select-label"
+          id="dubbed-select"
           value={category}
-          label="Age"
+          label="Dubbed"
           onChange={handleChange}
         >
           {categories.map((category, index) => (
@@ -63,4 +59,6 @@ export default function DubbedDropdown({ setAnimeData,setTotalAnimes,page, rowsP
       </FormControl>
     </Box>
   );
-}
+};
+
+export default DubbedDropdown;

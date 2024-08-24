@@ -1,22 +1,19 @@
 /* eslint-disable react/prop-types */
-import * as React from "react";
+import React,{useState,useEffect} from "react";
 import Box from "@mui/material/Box";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import { animeSearch, getCategories } from "../apis/animeListApi";
+import { getCategories } from "../apis/animeListApi";
 import startCase from "lodash/startCase";
 
-export default function GenreDropdown({
-  setAnimeData,
-  setTotalAnimes,
-  page,
-  rowsPerPage,
+const GenreDropdown = ({
   searchCriteria,
-}) {
-  const [categories, setCategories] = React.useState([]);
-  const [category, setCategory] = React.useState("");
+  searchAnime
+}) => {
+  const [categories, setCategories] = useState([]);
+  const [category, setCategory] = useState("");
 
   const handleChange = (event) => {
     setCategory(event.target.value);
@@ -24,13 +21,10 @@ export default function GenreDropdown({
       ...searchCriteria.current,
       genre: event.target.value,
     };
-    animeSearch(page, rowsPerPage, searchCriteria.current).then(({ data }) => {
-      setAnimeData(data.content);
-      setTotalAnimes(data.page.totalElements);
-    });
+    searchAnime(searchCriteria.current)
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     getCategories().then(({ data }) => {
       setCategories(data.sort().map((d) => startCase(d)));
     });
@@ -49,12 +43,12 @@ export default function GenreDropdown({
       }}
     >
       <FormControl fullWidth variant="standard">
-        <InputLabel id="demo-simple-select-label">Genre</InputLabel>
+        <InputLabel id="genre-select-label">Genre</InputLabel>
         <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
+          labelId="genre-select-label"
+          id="genre-select"
           value={category}
-          label="Age"
+          label="Genre"
           onChange={handleChange}
         >
           {categories.map((category, index) => (
@@ -67,3 +61,5 @@ export default function GenreDropdown({
     </Box>
   );
 }
+
+export default GenreDropdown

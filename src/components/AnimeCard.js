@@ -1,32 +1,37 @@
 /* eslint-disable react/prop-types */
 import React, { useState, useCallback, useEffect } from "react";
-import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
-import CardContent from "@mui/material/CardContent";
-import CardMedia from "@mui/material/CardMedia";
-import Typography from "@mui/material/Typography";
-import Rating from "@mui/material/Rating";
+
 import {
   Avatar,
   Box,
+  Card,
   CardHeader,
   FormControl,
   Grid,
   MenuItem,
   Paper,
   Select,
+  CardActions,
+  CardContent,
+  CardMedia,
+  Typography,
+  Rating,
+  Link,
+  Chip,
 } from "@mui/material";
-import Link from "@mui/material/Link";
+
 import EditIcon from "@mui/icons-material/Edit";
 import DoneIcon from "@mui/icons-material/Done";
-import OpenInNewIcon from "@mui/icons-material/OpenInNew";
-import Chip from "@mui/material/Chip";
-import GenreChips from "./GenreChips";
-import { parse, isToday } from "date-fns";
 import CloseIcon from "@mui/icons-material/Close";
-import { updateAnime } from "../apis/animeListApi";
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 
-export default function AnimeCard({ animeData }) {
+import { parse, isToday } from "date-fns";
+
+import GenreChips from "./GenreChips";
+import { updateAnime } from "../apis/animeListApi";
+import apiConfig from "../apiConfig";
+
+const AnimeCard = ({ animeData }) => {
   const {
     id,
     name,
@@ -47,10 +52,11 @@ export default function AnimeCard({ animeData }) {
     { label: "Watching", value: "WATCHING" },
     { label: "Won't Watch", value: "WONT_WATCH" },
   ];
-  const BASE_URL = "https://www10.gogoanimes.fi";
+
   const [disabled, setDisabled] = useState(true);
   const [watchedStatus, setWatchedStatus] = useState(watch_status);
   const [rating, setRating] = useState(star);
+
   const saveAnimeDetails = useCallback(() => {
     const animeUpdateRequest = {
       id,
@@ -59,6 +65,7 @@ export default function AnimeCard({ animeData }) {
     };
     updateAnime(animeUpdateRequest);
   }, [id, watchedStatus, rating]);
+
   useEffect(() => {
     setWatchedStatus(watch_status);
     setRating(star);
@@ -70,7 +77,7 @@ export default function AnimeCard({ animeData }) {
       sx={{
         maxWidth: 345,
         ":hover": {
-          boxShadow: 20, // theme.shadows[20]
+          boxShadow: 20,
           transform: "scale3d(1.05, 1.05, 1)",
         },
       }}
@@ -79,7 +86,11 @@ export default function AnimeCard({ animeData }) {
         sx={{ objectFit: "contain", height: "50px" }}
         avatar={
           <Avatar
-            src={image_url?.startsWith("/") ? BASE_URL + image_url : image_url}
+            src={
+              image_url?.startsWith("/")
+                ? apiConfig.BASE_URL + image_url
+                : image_url
+            }
           />
         }
         title={
@@ -105,7 +116,7 @@ export default function AnimeCard({ animeData }) {
             <Grid item xs={12}>
               <Box display="flex" justifyContent="flex-end">
                 <Link
-                  href={`${BASE_URL}${anime_url}`}
+                  href={`${apiConfig.BASE_URL}${anime_url}`}
                   underline="none"
                   target="_blank"
                 >
@@ -141,7 +152,11 @@ export default function AnimeCard({ animeData }) {
         component="img"
         alt="green iguana"
         height="280px"
-        image={image_url?.startsWith("/") ? BASE_URL + image_url : image_url}
+        image={
+          image_url?.startsWith("/")
+            ? apiConfig.BASE_URL + image_url
+            : image_url
+        }
         sx={{ objectFit: "contain", height: "200px" }}
       />
       <CardContent sx={{ height: "250px" }}>
@@ -185,11 +200,11 @@ export default function AnimeCard({ animeData }) {
           <Grid item xs={6}>
             <FormControl fullWidth variant="standard">
               <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
+                labelId="watch-status-select-label"
+                id="watch-status-select"
                 value={watchedStatus}
                 defaultValue={watchedStatus}
-                label="Age"
+                label="Watch Status"
                 onChange={(e) => {
                   setWatchedStatus(e.target.value);
                 }}
@@ -207,17 +222,19 @@ export default function AnimeCard({ animeData }) {
               </Select>
             </FormControl>
           </Grid>
-          <Grid xs={6}>
-          <Grid container direction='row-reverse'>
-          {isNew && (
-            <Grid item display="flex">
-              <Chip label="New" />
+          <Grid item xs={6}>
+            <Grid container direction="row-reverse">
+              {isNew && (
+                <Grid item display="flex">
+                  <Chip label="New" />
+                </Grid>
+              )}
             </Grid>
-          )}
-          </Grid>
           </Grid>
         </Grid>
       </CardActions>
     </Card>
   );
-}
+};
+
+export default AnimeCard;

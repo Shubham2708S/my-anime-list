@@ -1,26 +1,26 @@
 /* eslint-disable react/prop-types */
-import * as React from "react";
+import React, { useState } from "react";
 import Box from "@mui/material/Box";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import { animeSearch } from "../apis/animeListApi";
 
-export default function YearsDropdown({ setAnimeData,setTotalAnimes,page, rowsPerPage, searchCriteria }) {
-  const categories = Array.from({ length: 51 }, (_, i) => new Date().getFullYear() - i);;
-  const [category, setCategory] = React.useState("");
+export default function YearsDropdown({ searchCriteria, searchAnime }) {
+  const categories = Array.from(
+    { length: 51 },
+    (_, i) => new Date().getFullYear() - i
+  );
+
+  const [category, setCategory] = useState("");
 
   const handleChange = (event) => {
     setCategory(event.target.value);
-    
-        searchCriteria.current = {...searchCriteria.current,releaseYear:event.target.value};
-        
-    animeSearch(page,rowsPerPage,searchCriteria.current)
-      .then(({ data }) => {
-        setAnimeData(data.content);
-        setTotalAnimes(data.page.totalElements);
-      });
+    searchCriteria.current = {
+      ...searchCriteria.current,
+      releaseYear: event.target.value,
+    };
+    searchAnime(searchCriteria.current);
   };
 
   return (
@@ -35,13 +35,13 @@ export default function YearsDropdown({ setAnimeData,setTotalAnimes,page, rowsPe
         my: 1,
       }}
     >
-      <FormControl fullWidth variant="standard" >
-        <InputLabel id="demo-simple-select-label">Year</InputLabel>
+      <FormControl fullWidth variant="standard">
+        <InputLabel id="release-year-select-label">Year</InputLabel>
         <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
+          labelId="release-year-select-label"
+          id="release-year-select"
           value={category}
-          label="Age"
+          label="Release Year"
           onChange={handleChange}
         >
           {categories.map((category, index) => (

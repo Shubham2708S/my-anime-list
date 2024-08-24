@@ -1,12 +1,13 @@
 /* eslint-disable react/prop-types */
-import * as React from 'react';
+import React from 'react';
+
 import TablePagination from '@mui/material/TablePagination';
 
-export default function Pagination({
+const Pagination = ({
     page,setPage,rowsPerPage,setRowsPerPage,totalElements
-}) {
+}) => {
 
-  const handleChangePage = (event, newPage) => {
+  const handleChangePage = (_, newPage) => {
     setPage(newPage);
   };
 
@@ -27,3 +28,5 @@ export default function Pagination({
     />
   );
 }
+
+export default Pagination

@@ -1,26 +1,23 @@
 /* eslint-disable react/prop-types */
-import * as React from "react";
+import React, { useState } from "react";
 import Box from "@mui/material/Box";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import { animeSearch } from "../apis/animeListApi";
 
-export default function StatusDropdown({ setAnimeData,setTotalAnimes,page, rowsPerPage, searchCriteria }) {
-  const categories = ['Ongoing','Completed'];
-  const [category, setCategory] = React.useState("");
+export default function StatusDropdown({ searchCriteria, searchAnime }) {
+  const categories = ["Ongoing", "Completed"];
+
+  const [category, setCategory] = useState("");
 
   const handleChange = (event) => {
     setCategory(event.target.value);
-  
-    searchCriteria.current = {...searchCriteria.current,status:event.target.value};
-        
-    animeSearch(page,rowsPerPage,searchCriteria.current)
-      .then(({ data }) => {
-        setAnimeData(data.content);
-        setTotalAnimes(data.page.totalElements);
-      });
+    searchCriteria.current = {
+      ...searchCriteria.current,
+      status: event.target.value,
+    };
+    searchAnime(searchCriteria.current);
   };
 
   return (
@@ -35,13 +32,13 @@ export default function StatusDropdown({ setAnimeData,setTotalAnimes,page, rowsP
         my: 1,
       }}
     >
-      <FormControl fullWidth variant="standard" >
-        <InputLabel id="demo-simple-select-label">Status</InputLabel>
+      <FormControl fullWidth variant="standard">
+        <InputLabel id="status-select-label">Status</InputLabel>
         <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
+          labelId="status-select-label"
+          id="status-select"
           value={category}
-          label="Age"
+          label="Status"
           onChange={handleChange}
         >
           {categories.map((category, index) => (
