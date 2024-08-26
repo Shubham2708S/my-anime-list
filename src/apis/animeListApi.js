@@ -38,3 +38,8 @@ export const getCategories = () => {
   const url = `${apiConfig.ANIME_URL}/categories`;
   return axios.get(url);
 };
+
+export const getGenres = () => {
+  const url = `${apiConfig.ANIME_URL}/genres`;
+  return axios.get(url);
+};

@@ -1,34 +1,30 @@
 /* eslint-disable react/prop-types */
-import React,{useState,useEffect} from "react";
+import React, { useState } from "react";
 import Box from "@mui/material/Box";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import { getGenres } from "../apis/animeListApi";
-import startCase from "lodash/startCase";
 
-const GenreDropdown = ({
-  searchCriteria,
-  searchAnime
-}) => {
-  const [categories, setCategories] = useState([]);
+export default function EpisodesDropDown({ searchCriteria, searchAnime }) {
+  const categories = [
+    { label: "> 0", value: 0 },
+    { label: "> 15", value: 15 },
+    { label: "> 30", value: 30 },
+    { label: "> 50", value: 50 },
+    { label: "> 100", value: 100 },
+    { label: "> 500", value: 500 },
+  ];
   const [category, setCategory] = useState("");
 
   const handleChange = (event) => {
     setCategory(event.target.value);
     searchCriteria.current = {
       ...searchCriteria.current,
-      genre: event.target.value,
+      episodes: event.target.value,
     };
-    searchAnime(searchCriteria.current)
+    searchAnime(searchCriteria.current);
   };
-
-  useEffect(() => {
-    getGenres().then(({ data }) => {
-      setCategories(data.sort().map((d) => startCase(d)));
-    });
-  }, []);
 
   return (
     <Box
@@ -43,17 +39,17 @@ const GenreDropdown = ({
       }}
     >
       <FormControl fullWidth variant="standard">
-        <InputLabel id="genre-select-label">Genre</InputLabel>
+        <InputLabel id="episodes-select-label">Episodes</InputLabel>
         <Select
-          labelId="genre-select-label"
-          id="genre-select"
+          labelId="episodes-select-label"
+          id="episodes-select"
           value={category}
-          label="Genre"
+          label="Watched"
           onChange={handleChange}
         >
           {categories.map((category, index) => (
-            <MenuItem key={index} value={category}>
-              {category}
+            <MenuItem key={index} value={category.value}>
+              {category.label}
             </MenuItem>
           ))}
         </Select>
@@ -61,5 +57,3 @@ const GenreDropdown = ({
     </Box>
   );
 }
-
-export default GenreDropdown

@@ -26,7 +26,7 @@ const FilterCheckBoxes= ({ searchCriteria,searchAnime }) => {
       justifyContent: "center",
       flexWrap: "wrap",
       listStyle: "none",
-      p: 0.5,
+      p: 0,
       my: 2.5,
       mx: 0,
     }}>

@@ -2,7 +2,6 @@
 import React, { useState, useCallback, useEffect } from "react";
 
 import {
-  Avatar,
   Box,
   Card,
   CardHeader,
@@ -18,6 +17,7 @@ import {
   Rating,
   Link,
   Chip,
+  TextField,
 } from "@mui/material";
 
 import EditIcon from "@mui/icons-material/Edit";
@@ -44,6 +44,9 @@ const AnimeCard = ({ animeData }) => {
     status,
     release_year,
     summary,
+    category,
+    episodes,
+    watched_episodes,
   } = animeData;
   const isNew = isToday(parse(updated_date, "yyyy-MM-dd", new Date()));
   const categories = [
@@ -56,20 +59,23 @@ const AnimeCard = ({ animeData }) => {
   const [disabled, setDisabled] = useState(true);
   const [watchedStatus, setWatchedStatus] = useState(watch_status);
   const [rating, setRating] = useState(star);
+  const [watchedEpisodes, setWatchedEpisodes] = useState(watched_episodes);
 
   const saveAnimeDetails = useCallback(() => {
     const animeUpdateRequest = {
       id,
       watch_status: watchedStatus,
       star: rating,
+      watched_episodes: watchedEpisodes
     };
     updateAnime(animeUpdateRequest);
-  }, [id, watchedStatus, rating]);
+  }, [id, watchedStatus, rating, watchedEpisodes]);
 
   useEffect(() => {
     setWatchedStatus(watch_status);
     setRating(star);
-  }, [watch_status, star]);
+    setWatchedEpisodes(watched_episodes ?? 0);
+  }, [watch_status, star, watched_episodes]);
 
   return (
     <Card
@@ -84,15 +90,6 @@ const AnimeCard = ({ animeData }) => {
     >
       <CardHeader
         sx={{ objectFit: "contain", height: "50px" }}
-        avatar={
-          <Avatar
-            src={
-              image_url?.startsWith("/")
-                ? apiConfig.BASE_URL + image_url
-                : image_url
-            }
-          />
-        }
         title={
           <Rating
             name="size-small"
@@ -107,8 +104,9 @@ const AnimeCard = ({ animeData }) => {
         }
         subheader={
           <span>
-            <Chip label={status} />
-            <Chip label={release_year} sx={{ ml: "1em" }} />
+            <Chip sx={{fontSize:'0.6rem'}} label={status} />
+            <Chip sx={{fontSize:'0.6rem',ml:0.5}} label={release_year} />
+            <Chip sx={{fontSize:'0.6rem',ml:0.5}} label={category}  />
           </span>
         }
         action={
@@ -197,7 +195,7 @@ const AnimeCard = ({ animeData }) => {
       </CardContent>
       <CardActions sx={{ height: "20px" }}>
         <Grid container>
-          <Grid item xs={6}>
+          <Grid item xs={4}>
             <FormControl fullWidth variant="standard">
               <Select
                 labelId="watch-status-select-label"
@@ -223,7 +221,31 @@ const AnimeCard = ({ animeData }) => {
             </FormControl>
           </Grid>
           <Grid item xs={6}>
-            <Grid container direction="row-reverse">
+            <Grid container sx={{ m: 0, pl: 1 }}>
+              <Grid item xs={4}>
+                <TextField
+                  id="ep_watch-basic"
+                  placeholder="ep"
+                  variant="standard"
+                  sx={{
+                    minWidth: 20,
+                    display: "flex",
+                  }}
+                  disabled={disabled}
+                  value={watchedEpisodes}
+                  onChange={(e) => {
+                  setWatchedEpisodes(e.target.value);
+                }}
+                />
+              </Grid>
+              <Grid item xs={8} sx={{ pl: 1 }}>
+                of
+                <Chip label={episodes} sx={{ ml: 1 }} />
+              </Grid>
+            </Grid>
+          </Grid>
+          <Grid item xs={2}>
+            <Grid container direction="row-reverse" sx={{ m: 0, p: 0 }}>
               {isNew && (
                 <Grid item display="flex">
                   <Chip label="New" />

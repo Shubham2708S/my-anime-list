@@ -25,6 +25,8 @@ import YearsDropdown from "./YearsDropdown";
 import RatingsDropdown from "./RatingsDropdown";
 import StatusDropdown from "./StatusDropdown";
 import nothingFound from "../image/nothing_found.png";
+import CategoryDropdown from "./CategoryDropdown";
+import EpisodesDropDown from "./EpisodesDropDown";
 
 const Home = () => {
   const searchCriteria = useRef({});
@@ -169,12 +171,16 @@ const Home = () => {
           searchCriteria={searchCriteria}
           searchAnime={searchAnime}
         />
-        <FilterCheckBoxes
-          searchCriteria={searchCriteria}
-          searchAnime={searchAnime}
+        <CategoryDropdown
+        searchCriteria={searchCriteria}
+        searchAnime={searchAnime}
+        />
+        <EpisodesDropDown
+        searchCriteria={searchCriteria}
+        searchAnime={searchAnime}
         />
       </Grid>
-      <Grid container direction="row-reverse" sx={{ mx: "5vw", mb: "2vh" }}>
+      <Grid container direction="row-reverse" sx={{ mx: "5vw", my: "2vh" }}>
         <Button
           variant="outlined"
           startIcon={<AutorenewIcon />}
@@ -185,7 +191,7 @@ const Home = () => {
             flexWrap: "wrap",
             listStyle: "none",
             p: 0.5,
-            my: 1,
+            my: 2.5,
           }}
         >
           Refresh
@@ -200,11 +206,15 @@ const Home = () => {
             flexWrap: "wrap",
             listStyle: "none",
             p: 0.5,
-            m: 1,
+            m: 2.5,
           }}
         >
           Shuffle
         </Button>
+        <FilterCheckBoxes
+          searchCriteria={searchCriteria}
+          searchAnime={searchAnime}
+        />
       </Grid>
       <Grid item xs={12}>
         <Paper

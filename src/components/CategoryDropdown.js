@@ -5,10 +5,10 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import { getGenres } from "../apis/animeListApi";
+import { getCategories } from "../apis/animeListApi";
 import startCase from "lodash/startCase";
 
-const GenreDropdown = ({
+const CategoryDropdown = ({
   searchCriteria,
   searchAnime
 }) => {
@@ -19,13 +19,13 @@ const GenreDropdown = ({
     setCategory(event.target.value);
     searchCriteria.current = {
       ...searchCriteria.current,
-      genre: event.target.value,
+      category: event.target.value,
     };
     searchAnime(searchCriteria.current)
   };
 
   useEffect(() => {
-    getGenres().then(({ data }) => {
+    getCategories().then(({ data }) => {
       setCategories(data.sort().map((d) => startCase(d)));
     });
   }, []);
@@ -43,10 +43,10 @@ const GenreDropdown = ({
       }}
     >
       <FormControl fullWidth variant="standard">
-        <InputLabel id="genre-select-label">Genre</InputLabel>
+        <InputLabel id="category-select-label">Category</InputLabel>
         <Select
-          labelId="genre-select-label"
-          id="genre-select"
+          labelId="category-select-label"
+          id="category-select"
           value={category}
           label="Genre"
           onChange={handleChange}
@@ -62,4 +62,4 @@ const GenreDropdown = ({
   );
 }
 
-export default GenreDropdown
+export default CategoryDropdown
