@@ -39,9 +39,9 @@ const Home = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const searchAnime = useCallback(
-    (searchCriteria = {}) => {
+    () => {
       setIsLoading(true);
-      animeSearch(page, rowsPerPage, searchCriteria)
+      animeSearch(page, rowsPerPage, searchCriteria.current)
         .then(({ data }) => {
           setAnimeData(data.content);
           setTotalAnimes(data.page.totalElements);

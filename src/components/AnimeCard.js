@@ -59,17 +59,18 @@ const AnimeCard = ({ animeData }) => {
   const [disabled, setDisabled] = useState(true);
   const [watchedStatus, setWatchedStatus] = useState(watch_status);
   const [rating, setRating] = useState(star);
-  const [watchedEpisodes, setWatchedEpisodes] = useState(watched_episodes);
+  const [watchedEpisodes, setWatchedEpisodes] = useState(watched_episodes ?? 0);
 
   const saveAnimeDetails = useCallback(() => {
     const animeUpdateRequest = {
       id,
       watch_status: watchedStatus,
       star: rating,
-      watched_episodes: watchedEpisodes
+      watched_episodes:
+        watchedStatus === "WATCHED" ? episodes : watchedEpisodes,
     };
     updateAnime(animeUpdateRequest);
-  }, [id, watchedStatus, rating, watchedEpisodes]);
+  }, [id, watchedStatus, rating, watchedEpisodes, episodes]);
 
   useEffect(() => {
     setWatchedStatus(watch_status);
@@ -104,9 +105,9 @@ const AnimeCard = ({ animeData }) => {
         }
         subheader={
           <span>
-            <Chip sx={{fontSize:'0.6rem'}} label={status} />
-            <Chip sx={{fontSize:'0.6rem',ml:0.5}} label={release_year} />
-            <Chip sx={{fontSize:'0.6rem',ml:0.5}} label={category}  />
+            <Chip sx={{ fontSize: "0.6rem" }} label={status} />
+            <Chip sx={{ fontSize: "0.6rem", ml: 0.5 }} label={release_year} />
+            <Chip sx={{ fontSize: "0.6rem", ml: 0.5 }} label={category} />
           </span>
         }
         action={
@@ -234,8 +235,8 @@ const AnimeCard = ({ animeData }) => {
                   disabled={disabled}
                   value={watchedEpisodes}
                   onChange={(e) => {
-                  setWatchedEpisodes(e.target.value);
-                }}
+                    setWatchedEpisodes(e.target.value);
+                  }}
                 />
               </Grid>
               <Grid item xs={8} sx={{ pl: 1 }}>

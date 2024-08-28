@@ -7,10 +7,25 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 
 export default function YearsDropdown({ searchCriteria, searchAnime }) {
-  const categories = Array.from(
-    { length: 51 },
-    (_, i) => new Date().getFullYear() - i
-  );
+  const currentYear = new Date().getFullYear()
+  const yearsMap = {
+    0: [1900, 2000],
+    1: [2000, 2010],
+    2: [2010, 2015],
+    3: [2015, 2020],
+    4: [2020, currentYear - 1],
+    5: [currentYear, currentYear + 1],
+    6: [currentYear + 1, 2050]
+  };
+  const categories = [
+    { label: "<2000", value: 0 },
+    { label: "2000 - 2010", value: 1 },
+    { label: "2010 - 2015", value: 2 },
+    { label: "2015 - 2020", value: 3 },
+    { label: `2021 - ${currentYear - 1}`, value: 4 },
+    { label: `${currentYear}`, value: 5 },
+    { label: `> ${currentYear}`, value: 6}
+  ];
 
   const [category, setCategory] = useState("");
 
@@ -18,7 +33,8 @@ export default function YearsDropdown({ searchCriteria, searchAnime }) {
     setCategory(event.target.value);
     searchCriteria.current = {
       ...searchCriteria.current,
-      releaseYear: event.target.value,
+      releaseYearStart: yearsMap[event.target.value][0],
+      releaseYearEnd: yearsMap[event.target.value][1]
     };
     searchAnime(searchCriteria.current);
   };
@@ -45,8 +61,8 @@ export default function YearsDropdown({ searchCriteria, searchAnime }) {
           onChange={handleChange}
         >
           {categories.map((category, index) => (
-            <MenuItem key={index} value={category}>
-              {category}
+            <MenuItem key={index} value={category.value}>
+              {category.label}
             </MenuItem>
           ))}
         </Select>
