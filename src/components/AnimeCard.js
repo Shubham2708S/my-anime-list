@@ -25,7 +25,7 @@ import DoneIcon from "@mui/icons-material/Done";
 import CloseIcon from "@mui/icons-material/Close";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 
-import { parse, isToday } from "date-fns";
+import { parse, isAfter, subWeeks } from "date-fns";
 
 import GenreChips from "./GenreChips";
 import { updateAnime } from "../apis/animeListApi";
@@ -48,7 +48,9 @@ const AnimeCard = ({ animeData }) => {
     episodes,
     watched_episodes,
   } = animeData;
-  const isNew = isToday(parse(updated_date, "yyyy-MM-dd", new Date()));
+
+  const isNew = isAfter(subWeeks(new Date(),1),subWeeks(parse(updated_date, "yyyy-MM-dd", new Date()),1));
+
   const categories = [
     { label: "Watched", value: "WATCHED" },
     { label: "Not Watched", value: "NOT_WATCHED" },
@@ -249,7 +251,7 @@ const AnimeCard = ({ animeData }) => {
             <Grid container direction="row-reverse" sx={{ m: 0, p: 0 }}>
               {isNew && (
                 <Grid item display="flex">
-                  <Chip label="New" />
+                  <Chip label="New" color="error"/>
                 </Grid>
               )}
             </Grid>
