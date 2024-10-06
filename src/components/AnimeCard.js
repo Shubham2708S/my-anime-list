@@ -49,7 +49,7 @@ const AnimeCard = ({ animeData }) => {
     watched_episodes,
   } = animeData;
 
-  const isNew = isAfter(subWeeks(new Date(),1),subWeeks(parse(updated_date, "yyyy-MM-dd", new Date()),1));
+  const isNew = isAfter(parse(updated_date, "yyyy-MM-dd", new Date()),subWeeks(new Date(),1));
 
   const categories = [
     { label: "Watched", value: "WATCHED" },
